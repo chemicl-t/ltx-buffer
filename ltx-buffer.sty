@@ -1,0 +1,74 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ltx-buffer}
+\RequirePackage{verbatim}
+
+\catcode`\@=11
+\catcode`\:=11
+
+\newcounter{ltxbuffer:bufnum}
+\newwrite\ltxbuffer:out
+
+\newcommand
+	{\ltxbuffer:deleteallbuf}
+	{\write18{rm -f .ltxbuffer.tmp.*}}
+
+\let\std:enddocument\enddocument
+\def\enddocument{\ltxbuffer:deleteallbuf \std:enddocument}
+
+\newcommand
+	{\ltxbuffer:write}
+	[1]
+	{
+		\@bsphack
+		\immediate\openout\ltxbuffer:out=#1
+		\let\do\@makeother\dospecials
+		\catcode`\^^M=\active
+		\def\verbatim@processline{%
+			\immediate\write\ltxbuffer:out{\the\verbatim@line}
+		}%
+		\verbatim@start
+	}
+
+\newcommand
+	{\ltxbuffer:endwrite}
+	{%
+		\immediate\closeout\ltxbuffer:out
+		\@esphack
+		\catcode`\\=0
+		\catcode`\{=1
+		\catcode`\}=2
+		\catcode`\$=3
+		\catcode`\&=4
+		\catcode`\^^M=5
+		\catcode`\#=6
+		\catcode`\^=7
+		\catcode`\_=8
+		\catcode`\ =10
+		\catcode`\%=14
+	}
+
+\newcommand
+	{\ltxbuffer:bufname}
+	[1]
+	{.ltxbuffer.tmp.#1}
+
+\newenvironment
+	{buffer}
+	[1]
+	[\theltxbuffer:bufnum]
+	{
+		\stepcounter{ltxbuffer:bufnum}
+		\ltxbuffer:write{\ltxbuffer:bufname{#1}}
+	}
+	{
+		\ltxbuffer:endwrite
+	}
+
+\newcommand
+	{\getbuffer}
+	[1]
+	[\theltxbuffer:bufnum]
+	{\input{\ltxbuffer:bufname{#1}}}
+
+\catcode`\:=12
+\catcode`\@=12
