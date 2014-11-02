@@ -1,7 +1,6 @@
 # Created by https://www.gitignore.io
 
-test.tex
-test.pdf
+*.pdf
 
 ### LaTeX ###
 *.acn

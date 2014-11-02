@@ -1,0 +1,24 @@
+\documentclass[uplatex]{jsarticle}
+\usepackage{ltx-buffer}
+
+\begin{document}
+
+\def\hello{hello!}
+
+\begin{buffer}[oh]
+a b c \hello
+\end{buffer}
+
+\begin{buffer}[label]
+wow!
+\end{buffer}
+
+\getbuffer[oh]
+
+%\typebuffer[oh]
+
+abc
+
+\getbuffer[label]
+
+\end{document}
